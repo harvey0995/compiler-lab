@@ -1,6 +1,8 @@
 
-#include <stdio.h>
-#include <string.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<ctype.h>
 
 char input[100];
 int pos = 0;
@@ -10,6 +12,11 @@ void Eprime();
 void T();
 void Tprime();
 void F();
+void error();
+{
+    printf("Invalid Expression:\n");
+    exit(0);
+}
 
 void E()
 {
@@ -19,7 +26,7 @@ void E()
 
 void Eprime()
 {
-    if (input[pos] == '+' || input[pos] == '-')
+    if(input[pos]=='+'||input[pos]=='-')
     {
         pos++;
         T();
@@ -35,7 +42,7 @@ void T()
 
 void Tprime()
 {
-    if (input[pos] == '*' || input[pos] == '/')
+    if(input[pos]=='*'||input[pos]=='/')
     {
         pos++;
         F();
@@ -45,40 +52,46 @@ void Tprime()
 
 void F()
 {
-    if (input[pos] == '(')
+    if(input[pos]=='i')
+    {
+        pos++
+    }
+
+    else if (input[pos]=='(')
     {
         pos++;
         E();
 
-        if (input[pos] == ')')
-            pos++;
-        else
-            printf("Error: Missing )\n");
-    }
-    else if (input[pos] == 'i' && input[pos + 1] == 'd')
-    {
-        pos += 2;
+        if(input[pos]==')')
+
+        pos++;
+
+        else{
+            error();
+        }
     }
     else
     {
-        printf("Error: Invalid input\n");
+        error();
     }
 }
+
 
 int main()
 {
-    printf("Enter the input string: ");
-    scanf("%99s", input);
 
-    E();
+printf("Enter expression: ");
+scanf("%s", input);
+E();
 
-    if (input[pos] == '\0')
-        printf("String is accepted.\n");
-    else
-        printf("String is rejected.\n");
 
-    return 0;
+if (input[pos] == '\0')
+printf("Valid Expression\n");
+else
+error();
+return 0;
 }
+
 
 
 
