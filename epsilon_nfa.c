@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+
 #define MAX 20
 
 int n, symbols;
@@ -7,7 +8,7 @@ int epsilon[MAX][MAX];
 int trans[MAX][MAX][MAX];
 int closure[MAX][MAX];
 
-/* Find epsilon closure of a state */
+// Find epsilon closure using DFS
 void findClosure(int state, int start)
 {
     int i;
@@ -24,7 +25,7 @@ void findClosure(int state, int start)
     }
 }
 
-/* Calculate epsilon closure for all states */
+// Calculate epsilon closure for all states
 void calculateClosures()
 {
     int i;
@@ -44,7 +45,7 @@ int main()
     printf("Enter number of input symbols: ");
     scanf("%d", &symbols);
 
-    /* Initialize */
+    // Initialize matrices
     for (i = 0; i < n; i++)
     {
         for (j = 0; j < n; j++)
@@ -57,7 +58,7 @@ int main()
         }
     }
 
-    /* Read epsilon transitions */
+    // Read epsilon transitions
     printf("Enter number of epsilon transitions: ");
     scanf("%d", &m);
 
@@ -69,7 +70,7 @@ int main()
         epsilon[from][to] = 1;
     }
 
-    /* Calculate epsilon closures */
+    // Calculate epsilon closures
     calculateClosures();
 
     printf("\nEpsilon Closures:\n");
@@ -87,10 +88,11 @@ int main()
         printf("}\n");
     }
 
-    /* Read transitions for each input symbol */
+    // Read normal transitions for each input symbol
     for (s = 0; s < symbols; s++)
     {
         printf("\nEnter transitions for input symbol %d.\n", s);
+
         printf("Enter number of transitions: ");
         scanf("%d", &m);
 
@@ -103,7 +105,7 @@ int main()
         }
     }
 
-    /* Convert epsilon-NFA to NFA */
+    // Convert epsilon-NFA to NFA
     printf("\nNFA without epsilon transitions:\n");
 
     for (s = 0; s < symbols; s++)
@@ -114,17 +116,17 @@ int main()
         {
             int result[MAX] = {0};
 
-            /* Step 1: Find epsilon closure of current state */
+            // Step 1: Find epsilon closure of current state
             for (j = 0; j < n; j++)
             {
                 if (closure[i][j])
                 {
-                    /* Step 2: Follow input symbol */
+                    // Step 2: Follow input transition
                     for (k = 0; k < n; k++)
                     {
                         if (trans[s][j][k])
                         {
-                            /* Step 3: Add epsilon closure of destination */
+                            // Step 3: Add epsilon closure of destination
                             int p;
 
                             for (p = 0; p < n; p++)
@@ -137,6 +139,7 @@ int main()
                 }
             }
 
+            // Display converted transitions
             printf("q%d -> { ", i);
 
             for (j = 0; j < n; j++)
