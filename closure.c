@@ -1,4 +1,5 @@
 
+
 #include <stdio.h>
 
 #define MAX 20
@@ -8,6 +9,7 @@ char alphabet[MAX];
 int e[MAX][MAX];
 int visited[MAX];
 
+// Function to find epsilon closure using DFS
 void epsilonClosure(int state)
 {
     int i;
@@ -35,12 +37,16 @@ int main()
     scanf("%d", &na);
 
     printf("Enter alphabets (e must be last): ");
+
     for (i = 0; i < na; i++)
         scanf(" %c", &alphabet[i]);
 
+    // Initialize transition matrix
     for (i = 0; i < n; i++)
+    {
         for (j = 0; j < n; j++)
             e[i][j] = 0;
+    }
 
     printf("Enter number of transitions: ");
     scanf("%d", &m);
@@ -55,6 +61,7 @@ int main()
             e[from][to] = 1;
     }
 
+    // Calculate epsilon closure of every state
     printf("\nEpsilon Closures:\n");
 
     for (i = 0; i < n; i++)
@@ -75,8 +82,10 @@ int main()
 
 
 
-gcc epsilon.c -o epsilon
-./epsilon
+
+
+gcc closure.c -o closure
+./closure
 
 
 
