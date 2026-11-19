@@ -1,70 +1,114 @@
 
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
 
-char st[100];
-int n = 0;
+char stack[100], input[100];
+int top = -1, pos = 0;
 
-char *rule[] = {"id", "E+E", "E*E", "(E)"};
-
-int reduce()
+void printRow(const char *action)
 {
-    for (int r = 0; r < 4; r++)
+    printf("%-20s %-20s %-20s\n",
+           stack, input + pos, action);
+}
+
+void reduce()
+{
+    /* E -> i */
+    if (top >= 0 && stack[top] == 'i')
     {
-        int len = strlen(rule[r]);
-
-        if (n >= len &&
-            strncmp(st + n - len, rule[r], len) == 0)
-        {
-            n -= len;
-            st[n++] = 'E';
-            st[n] = '\0';
-
-            printf("%-20s REDUCE\n", st);
-            return 1;
-        }
+        stack[top] = 'E';
+        stack[top + 1] = '\0';
+        printRow("Reduce E->i");
     }
 
-    return 0;
+    /* E -> (E) */
+    else if (top >= 2 &&
+             stack[top - 2] == '(' &&
+             stack[top - 1] == 'E' &&
+             stack[top] == ')')
+    {
+        top -= 2;
+        stack[top] = 'E';
+        stack[top + 1] = '\0';
+        printRow("Reduce E->(E)");
+    }
+
+    /* E -> E*E */
+    else if (top >= 2 &&
+             stack[top - 2] == 'E' &&
+             stack[top - 1] == '*' &&
+             stack[top] == 'E')
+    {
+        top -= 2;
+        stack[top] = 'E';
+        stack[top + 1] = '\0';
+        printRow("Reduce E->E*E");
+    }
+
+    /* E -> E+E */
+    else if (top >= 2 &&
+             stack[top - 2] == 'E' &&
+             stack[top - 1] == '+' &&
+             stack[top] == 'E')
+    {
+        top -= 2;
+        stack[top] = 'E';
+        stack[top + 1] = '\0';
+        printRow("Reduce E->E+E");
+    }
 }
 
 int main()
 {
-    char in[100];
+    printf("Enter input string: ");
+    scanf("%s", input);
 
-    printf("Enter the input string: ");
-    scanf("%99s", in);
+    stack[0] = '\0';
 
-    printf("\n%-20s %s\n", "Stack", "Action");
+    printf("\n%-20s %-20s %-20s\n",
+           "Stack", "Input", "Action");
 
-    for (int i = 0; in[i] != '\0'; i++)
+    printf("------------------------------------------------------------\n");
+
+    /* SHIFT operation */
+    while (input[pos] != '\0')
     {
-        if (in[i] == 'i' && in[i + 1] == 'd')
+        stack[++top] = input[pos++];
+        stack[top + 1] = '\0';
+
+        printRow("Shift");
+
+        /* REDUCE operation */
+        while (1)
         {
-            st[n++] = 'i';
-            st[n++] = 'd';
-            i++;
+            int oldTop = top;
+
+            reduce();
+
+            if (oldTop == top)
+                break;
         }
-        else
-        {
-            st[n++] = in[i];
-        }
-
-        st[n] = '\0';
-
-        printf("%-20s SHIFT\n", st);
-
-        while (reduce());
     }
 
-    if (n == 1 && st[0] == 'E')
-        printf("\nInput string is ACCEPTED.\n");
+    /* Final reductions */
+    while (1)
+    {
+        int oldTop = top;
+
+        reduce();
+
+        if (oldTop == top)
+            break;
+    }
+
+    /* Acceptance condition */
+    if (top == 0 && stack[0] == 'E')
+        printf("\nAccepted\n");
     else
-        printf("\nInput string is REJECTED.\n");
+        printf("\nRejected\n");
 
     return 0;
 }
-
 
 
 
